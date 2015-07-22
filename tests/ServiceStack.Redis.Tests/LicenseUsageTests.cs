@@ -59,8 +59,8 @@ namespace ServiceStack.Redis.Tests
         {
             using (var client = new RedisClient(TestConfig.SingleHost))
             {
-                Assert.Throws<LicenseException>(() =>
-                    6100.Times(() => client.Get("any key")));
+                8000.Times(() => client.Get("any key"));
+                Assert.Pass();
             }
         }
     }
