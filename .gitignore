@@ -4,6 +4,7 @@ obj/
 latest/
 /env-vars.bat
 *.suo
+*.userprefs
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
