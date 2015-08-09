@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Diagnostics;
 using NUnit.Framework;
+using ServiceStack.Redis.Tests.Utils;
 using ServiceStack.Text;
 
 namespace ServiceStack.Redis.Tests
 {
-    [Explicit("Diagnostic only Integration Test")]
     [TestFixture]
     public class DiagnosticTests
     {
-        const string RedisServer = "or-redis02";
+        readonly string RedisServer = "freestack:redisTestServerHost".AppConfigValue();
 
         const int MessageSizeBytes = 1024 * 1024;
-        private const int Count = 10;
+        const int Count = 10;
 
-        private byte[] RandomBytes(int Length)
+        static byte[] RandomBytes(int Length)
         {
             var rnd = new Random();
             var bytes = new byte[Length];
@@ -59,6 +59,4 @@ namespace ServiceStack.Redis.Tests
         }
 
     }
-
-
 }
