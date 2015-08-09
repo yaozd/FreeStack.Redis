@@ -413,9 +413,7 @@ namespace ServiceStack.Redis
         {
             try
             {
-                var typedClient = new RedisTypedClient<T>(this);
-                LicenseUtils.AssertValidUsage(LicenseFeature.Redis, QuotaType.Types, __uniqueTypes.Count);
-                return typedClient;
+                return new RedisTypedClient<T>(this);
             }
             catch (TypeInitializationException ex)
             {

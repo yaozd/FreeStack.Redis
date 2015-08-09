@@ -2,9 +2,7 @@
 // License: https://raw.github.com/ServiceStack/ServiceStack/master/license.txt
 
 
-using System.Data;
 using NUnit.Framework;
-using ServiceStack.Configuration;
 using ServiceStack.Text;
 
 namespace ServiceStack.Redis.Tests
@@ -19,77 +17,67 @@ namespace ServiceStack.Redis.Tests
             JsConfig.Reset();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            Licensing.RegisterLicense(new AppSettings().GetString("servicestack:license"));
-        }
-
         [Test]
-        public void Allows_access_of_21_types()
-        {
-            Access20Types();
-            Access20Types();
-        }
-
-        [Test]
-        public void Throws_on_access_of_21_types()
+        public void Allows_access_of_20_types()
         {
             using (var client = new RedisClient(TestConfig.SingleHost))
             {
                 Access20Types();
                 Access20Types();
 
-                Assert.Throws<LicenseException>(() =>
-                    client.As<T21>());
-            }
-        }
-
-        [Test, Explicit("Takes too long - but works!")]
-        public void Allows_access_of_6000_operations()
-        {
-            using (var client = new RedisClient(TestConfig.SingleHost))
-            {
-                6000.Times(() => client.Get("any key"));
-            }
-        }
-
-        [Test, Explicit("Takes too long - but works!")]
-        public void Throws_on_access_of_6100_operations()
-        {
-            using (var client = new RedisClient(TestConfig.SingleHost))
-            {
-                8000.Times(() => client.Get("any key"));
                 Assert.Pass();
             }
         }
-    }
 
-    [TestFixture]
-    public class RegisteredLicenseUsageTests : LicenseUsageTests
-    {
         [Test]
         public void Allows_access_of_21_types()
         {
-            Licensing.RegisterLicense(new AppSettings().GetString("servicestack:license"));
-
             using (var client = new RedisClient(TestConfig.SingleHost))
             {
                 Access20Types();
                 Access20Types();
 
                 client.As<T21>();
+
+                Assert.Pass();
             }
         }
 
-        [Test, Explicit("Takes too long - but works!")]
-        public void Allows_access_of_6100_operations()
+        [Test]
+        public void Allows_access_of_more_than_21_types()
         {
-            Licensing.RegisterLicense(new AppSettings().GetString("servicestack:license"));
-
             using (var client = new RedisClient(TestConfig.SingleHost))
             {
-                6100.Times(() => client.Get("any key"));
+                Access20Types();
+                Access20Types();
+
+                client.As<T21>();
+                Assert.Pass();
+
+                client.As<T22>();
+                Assert.Pass();
+
+                client.As<T23>();
+                Assert.Pass();
+
+                client.As<T24>();
+                Assert.Pass();
+            }
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(6000)]
+        [TestCase(6001)]
+        [TestCase(6100)]
+        [TestCase(8000)]
+        [TestCase(100000)]
+        public void Allows_access_of_any_number_of_operations(int times)
+        {
+            using (var client = new RedisClient(TestConfig.SingleHost))
+            {
+                times.Times(() => client.Get("any key"));
+                Assert.Pass();
             }
         }
     }
@@ -115,6 +103,9 @@ namespace ServiceStack.Redis.Tests
     class T19 { public int Id { get; set; } }
     class T20 { public int Id { get; set; } }
     class T21 { public int Id { get; set; } }
+    class T22 { public int Id { get; set; } }
+    class T23 { public int Id { get; set; } }
+    class T24 { public int Id { get; set; } }
 
     public class LicenseUsageTests
     {
