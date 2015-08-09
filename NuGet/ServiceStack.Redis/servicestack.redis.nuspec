@@ -1,16 +1,21 @@
 <?xml version="1.0"?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <id>ServiceStack.Redis</id>
-    <title>C# Redis client for the Redis NoSQL DB</title>
-    <version>4.0.0</version>
-    <authors>Service Stack</authors>
-    <owners>Service Stack</owners>
+    <id>FreeStack.Redis</id>
+    <title>Fork of the official C# ServiceStack client for the Redis NoSQL DB</title>
+    <version>4.1.0</version>
+    <authors>@barambani</authors>
+    <owners>@barambani</owners>
     <description>
-      C# Redis Client for the worlds fastest distributed NoSQL datastore. Byte[], String and POCO Typed clients.
-      Thread-Safe Basic and Pooled client managers included.
-
-      To revert back to the previous BSD ServiceStack v3, see https://github.com/ServiceStackV3/ServiceStackV3
+      This is a fork of the official C# ServiceStack client for Redis. This fork removes
+      
+        - the limitation of 6000 commands per hour to the Redis Client
+        - the limitation of 20 different types in Redis Client Typed APIs
+      
+      both imposed to the free version of the official library.
+      
+      For documentation and commercial support please visit the ServiceStack.Redis repo at
+      https://github.com/ServiceStack/ServiceStack.Redis
     </description>
     <projectUrl>https://github.com/ServiceStack/ServiceStack.Redis</projectUrl>
     <licenseUrl>https://servicestack.net/terms</licenseUrl>
