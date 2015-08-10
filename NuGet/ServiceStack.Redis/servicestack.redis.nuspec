@@ -24,9 +24,6 @@
     <tags>Redis NoSQL Client Distributed Cache PubSub Messaging Transactions</tags>
     <language>en-US</language>
     <copyright></copyright>
-    <dependencies>
-      <dependency id="ServiceStack.Common" version="4.0" />
-    </dependencies>
   </metadata>
   <files>
     <file src="../../src/ServiceStack.Redis/bin/Release/*.dll" target="lib" />
