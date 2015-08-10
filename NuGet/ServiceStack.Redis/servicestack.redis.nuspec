@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>FreeStack.Redis</id>
     <title>Fork of the official C# ServiceStack client for the Redis NoSQL DB</title>
-    <version>4.0.0</version>
+    <version>4.1.1</version>
     <authors>@barambani</authors>
     <owners>@barambani</owners>
     <summary>This is a fork of the official C# ServiceStack client for Redis that removes its limitations</summary>
@@ -29,7 +29,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="../../lib/**/*.*" target="lib" />
-    <file src="../../src/ServiceStack.Redis/**/*.cs" target="src" />
+    <file src="../../src/ServiceStack.Redis/bin/Release/*.dll" target="lib" />
+    <file src="../../src/ServiceStack.Redis/bin/Release/*.mdb" target="lib" />
   </files>
 </package>
