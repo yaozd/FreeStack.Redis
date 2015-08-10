@@ -23,7 +23,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>Redis NoSQL Client Distributed Cache PubSub Messaging Transactions</tags>
     <language>en-US</language>
-    <copyright></copyright>
   </metadata>
   <files>
     <file src="../../src/ServiceStack.Redis/bin/Release/*.dll" target="lib" />
