@@ -2,11 +2,11 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>FreeStack.Redis</id>
-    <title>Fork of the official C# ServiceStack client for the Redis NoSQL DB</title>
+    <title>FreeStack.Redis</title>
     <version>4.1.1</version>
     <authors>@barambani</authors>
     <owners>@barambani</owners>
-    <summary>This is a fork of the official C# ServiceStack client for Redis that removes its limitations</summary>
+    <summary>Fork of the official C# ServiceStack client for the Redis NoSQL DB that removes its limitations</summary>
     <description>
       This is a fork of the official C# ServiceStack client for Redis. This fork removes
       
