@@ -6,6 +6,7 @@
     <version>4.1.0</version>
     <authors>@barambani</authors>
     <owners>@barambani</owners>
+    <summary>This is a fork of the official C# ServiceStack client for Redis that removes its limitations</summary>
     <description>
       This is a fork of the official C# ServiceStack client for Redis. This fork removes
       
