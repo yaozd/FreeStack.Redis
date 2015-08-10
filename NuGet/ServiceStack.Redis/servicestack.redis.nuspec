@@ -31,5 +31,6 @@
   <files>
     <file src="../../src/ServiceStack.Redis/bin/Release/*.dll" target="lib" />
     <file src="../../src/ServiceStack.Redis/bin/Release/*.mdb" target="lib" />
+    <file src="../../src/ServiceStack.Redis/bin/Release/*.xml" target="lib" />
   </files>
 </package>
