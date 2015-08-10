@@ -18,13 +18,13 @@
       For documentation and commercial support please visit the ServiceStack.Redis repo at
       https://github.com/ServiceStack/ServiceStack.Redis
     </description>
-    <projectUrl>https://github.com/ServiceStack/ServiceStack.Redis</projectUrl>
-    <licenseUrl>https://servicestack.net/terms</licenseUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <iconUrl>https://servicestack.net/img/logo-32.png</iconUrl>
+    <projectUrl>https://github.com/barambani/FreeStack.Redis</projectUrl>
+    <licenseUrl>https://github.com/barambani/FreeStack.Redis/blob/master/license.txt</licenseUrl>
+    <requireLicenseAcceptance></requireLicenseAcceptance>
+    <iconUrl></iconUrl>
     <tags>Redis NoSQL Client Distributed Cache PubSub Messaging Transactions</tags>
     <language>en-US</language>
-    <copyright>ServiceStack 2013 and contributors</copyright>
+    <copyright></copyright>
     <dependencies>
       <dependency id="ServiceStack.Common" version="4.0" />
     </dependencies>
