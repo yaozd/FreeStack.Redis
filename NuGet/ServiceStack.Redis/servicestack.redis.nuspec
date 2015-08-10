@@ -20,7 +20,7 @@
     </description>
     <projectUrl>https://github.com/barambani/FreeStack.Redis</projectUrl>
     <licenseUrl>https://github.com/barambani/FreeStack.Redis/blob/master/license.txt</licenseUrl>
-    <requireLicenseAcceptance></requireLicenseAcceptance>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <iconUrl></iconUrl>
     <tags>Redis NoSQL Client Distributed Cache PubSub Messaging Transactions</tags>
     <language>en-US</language>
