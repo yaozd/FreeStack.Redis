@@ -37,7 +37,7 @@ _ReSharper*/
 App_Data/
 .vs/
 
-NuGet/
+NuGet/packages
 NuGet.Signed/
 packages/
 *.pfx

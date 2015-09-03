@@ -174,7 +174,7 @@
       <HintPath>..\..\src\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Text">
-      <HintPath>..\..\src\packages\FreeStack.Text.4.0.0\lib\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\src\packages\FreeStack.Text.4.1.0\lib\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
