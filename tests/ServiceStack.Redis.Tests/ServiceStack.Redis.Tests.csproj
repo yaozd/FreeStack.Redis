@@ -181,6 +181,7 @@
     <Compile Include="AdhocClientTests.cs" />
     <Compile Include="ConfigTests.cs" />
     <Compile Include="CustomCommandTests.cs" />
+    <Compile Include="LuaCachedScripts.cs" />
     <Compile Include="Examples\TestData.cs" />
     <Compile Include="Issues\RedisCharacterizationTests.cs" />
     <Compile Include="RedisBatchTests.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="RedisPubSubServerTests.cs" />
     <Compile Include="RedisPubSubTests.cs" />
     <Compile Include="RedisScanTests.cs" />
+    <Compile Include="RedisStatsTests.cs" />
     <Compile Include="RedisTransactionCommonTests.cs" />
     <Compile Include="RedisTransactionTests.cs" />
     <Compile Include="RedisUtilTests.cs" />

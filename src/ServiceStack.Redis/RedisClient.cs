@@ -12,9 +12,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using ServiceStack.Redis.Generic;
 using ServiceStack.Redis.Pipeline;
 using ServiceStack.Text;
@@ -242,6 +244,11 @@ namespace ServiceStack.Redis
         public List<Dictionary<string, string>> GetClientList()
         {
             return GetClientsInfo();
+        }
+
+        public void SetValues(Dictionary<string, string> map)
+        {
+            SetAll(map);
         }
 
         public void SetAll(IEnumerable<string> keys, IEnumerable<string> values)
@@ -858,6 +865,53 @@ namespace ServiceStack.Redis
 
         #region LUA EVAL
 
+        static readonly ConcurrentDictionary<string, string> CachedLuaSha1Map =
+            new ConcurrentDictionary<string, string>();
+
+        public T ExecCachedLua<T>(string scriptBody, Func<string, T> scriptSha1)
+        {
+            string sha1;
+            if (!CachedLuaSha1Map.TryGetValue(scriptBody, out sha1))
+                CachedLuaSha1Map[scriptBody] = sha1 = LoadLuaScript(scriptBody);
+
+            try
+            {
+                return scriptSha1(sha1);
+            }
+            catch (RedisResponseException ex)
+            {
+                if (!ex.Message.StartsWith("NOSCRIPT"))
+                    throw;
+
+                CachedLuaSha1Map[scriptBody] = sha1 = LoadLuaScript(scriptBody);
+                return scriptSha1(sha1);
+            }
+        }
+
+        public RedisText ExecLua(string body, params string[] args)
+        {
+            var data = base.EvalCommand(body, 0, args.ToMultiByteArray());
+            return data.ToRedisText();
+        }
+
+        public RedisText ExecLua(string luaBody, string[] keys, string[] args)
+        {
+            var data = base.EvalCommand(luaBody, keys.Length, MergeAndConvertToBytes(keys, args));
+            return data.ToRedisText();
+        }
+
+        public RedisText ExecLuaSha(string sha1, params string[] args)
+        {
+            var data = base.EvalShaCommand(sha1, 0, args.ToMultiByteArray());
+            return data.ToRedisText();
+        }
+
+        public RedisText ExecLuaSha(string sha1, string[] keys, string[] args)
+        {
+            var data = base.EvalShaCommand(sha1, keys.Length, MergeAndConvertToBytes(keys, args));
+            return data.ToRedisText();
+        }
+
         public long ExecLuaAsInt(string body, params string[] args)
         {
             return base.EvalInt(body, 0, args.ToMultiByteArray());
@@ -1058,9 +1112,9 @@ namespace ServiceStack.Redis
             {
                 var text = base.Role();
                 var roleName = text.Children[0].Text;
-                return ToServerRole(roleName); 
+                return ToServerRole(roleName);
             }
-            
+
             string role;
             this.Info.TryGetValue("role", out role);
             return ToServerRole(role);
@@ -1070,7 +1124,7 @@ namespace ServiceStack.Redis
         {
             if (string.IsNullOrEmpty(roleName))
                 return RedisServerRole.Unknown;
-    
+
             switch (roleName)
             {
                 case "master":

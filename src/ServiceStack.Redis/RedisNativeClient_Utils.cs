@@ -119,14 +119,18 @@ namespace ServiceStack.Redis
                 {
                     if (ServerVersionNumber == 0)
                     {
-                        var parts = ServerVersion.Split('.');
-                        var version = int.Parse(parts[0]) * 1000;
-                        if (parts.Length > 1)
-                            version += int.Parse(parts[1]) * 100;
-                        if (parts.Length > 2)
-                            version += int.Parse(parts[2]);
+                        ServerVersionNumber = RedisConfig.AssumeServerVersion.GetValueOrDefault(0);
+                        if (ServerVersionNumber <= 0)
+                        { 
+                            var parts = ServerVersion.Split('.');
+                            var version = int.Parse(parts[0]) * 1000;
+                            if (parts.Length > 1)
+                                version += int.Parse(parts[1]) * 100;
+                            if (parts.Length > 2)
+                                version += int.Parse(parts[2]);
 
-                        ServerVersionNumber = version;
+                            ServerVersionNumber = version;
+                        }
                     }
                 }
                 catch (Exception)
@@ -484,7 +488,10 @@ namespace ServiceStack.Redis
                 {
                     var retryableEx = outerEx as RedisRetryableException;
                     if (retryableEx == null && outerEx is RedisException)
+                    {
+                        ResetSendBuffer();
                         throw;
+                    }
 
                     var ex = retryableEx ?? GetRetryableException(outerEx);
                     if (ex == null)
@@ -1104,6 +1111,24 @@ namespace ServiceStack.Redis
 
             var cmdArgs = MergeCommandWithArgs(Commands.EvalSha, sha1.ToUtf8Bytes(), keys.PrependInt(numberKeysInArgs));
             return SendExpectMultiData(cmdArgs);
+        }
+
+        public RedisData EvalCommand(string luaBody, int numberKeysInArgs, params byte[][] keys)
+        {
+            if (luaBody == null)
+                throw new ArgumentNullException("luaBody");
+
+            var cmdArgs = MergeCommandWithArgs(Commands.Eval, luaBody.ToUtf8Bytes(), keys.PrependInt(numberKeysInArgs));
+            return RawCommand(cmdArgs);
+        }
+
+        public RedisData EvalShaCommand(string sha1, int numberKeysInArgs, params byte[][] keys)
+        {
+            if (sha1 == null)
+                throw new ArgumentNullException("sha1");
+
+            var cmdArgs = MergeCommandWithArgs(Commands.EvalSha, sha1.ToUtf8Bytes(), keys.PrependInt(numberKeysInArgs));
+            return RawCommand(cmdArgs);
         }
 
         public string CalculateSha1(string luaBody)
