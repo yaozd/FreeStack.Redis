@@ -17,14 +17,10 @@ namespace ServiceStack.Redis.Tests
         [Explicit]
         public void Batch_and_Pipeline_requests_only_counts_as_1_request()
         {
-            var reqCount = RedisNativeClient.RequestsPerHour;
-
             var map = new Dictionary<string,string>();
             10.Times(i => map["key" + i] = "value" + i);
 
             Redis.SetValues(map);
-
-            Assert.That(RedisNativeClient.RequestsPerHour, Is.EqualTo(reqCount + 1));
 
             var keyTypes = new Dictionary<string, string>();
             using (var pipeline = Redis.CreatePipeline())
@@ -35,7 +31,6 @@ namespace ServiceStack.Redis.Tests
                 pipeline.Flush();
             }
 
-            Assert.That(RedisNativeClient.RequestsPerHour, Is.EqualTo(reqCount + 2));
             Assert.That(keyTypes.Count, Is.EqualTo(map.Count));
         }
     }

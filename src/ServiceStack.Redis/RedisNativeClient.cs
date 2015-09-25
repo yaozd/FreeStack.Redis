@@ -154,7 +154,6 @@ namespace ServiceStack.Redis
             if (Pipeline != null)
             {
                 Pipeline = null;
-                Interlocked.Increment(ref __requestsPerHour);
             }
         }
 
