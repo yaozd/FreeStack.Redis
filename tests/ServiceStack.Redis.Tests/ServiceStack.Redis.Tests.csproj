@@ -164,17 +164,17 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Sider, Version=0.9.3.42023, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\src\packages\Sider.0.9.3\lib\net40-Client\Sider.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\src\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Sider">
+      <HintPath>..\..\src\packages\Sider.0.9.4\lib\net40-Client\Sider.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
-      <HintPath>..\..\src\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+      <HintPath>..\..\src\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Text">
-      <HintPath>..\..\src\packages\FreeStack.Text.4.1.2\lib\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\src\packages\FreeStack.Text.4.1.3\lib\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
