@@ -7,16 +7,17 @@ using System.Linq;
 using System.Threading;
 using ServiceStack.Caching;
 using ServiceStack.Logging;
+using ServiceStack.Text;
 
 namespace ServiceStack.Redis
 {
     public class RedisPoolConfig
     {
-        public const int DefaultMaxPoolSize = 40;
+        public static int DefaultMaxPoolSize = 40;
 
         public RedisPoolConfig()
         {
-            MaxPoolSize = DefaultMaxPoolSize;
+            MaxPoolSize = RedisConfig.DefaultMaxPoolSize ?? DefaultMaxPoolSize;
         }
 
         public int MaxPoolSize { get; set; }
@@ -48,10 +49,11 @@ namespace ServiceStack.Redis
 
         public IRedisResolver RedisResolver { get; set; }
 
-        public int MaxPoolSize { get; set; }
+        public int MaxPoolSize { get; private set; }
 
         public RedisManagerPool() : this(RedisConfig.DefaultHost) { }
         public RedisManagerPool(string host) : this(new[] { host }) { }
+        public RedisManagerPool(string host, RedisPoolConfig config) : this(new[] { host }, config) { }
         public RedisManagerPool(IEnumerable<string> hosts) : this(hosts, null) { }
 
         public RedisManagerPool(IEnumerable<string> hosts, RedisPoolConfig config)
@@ -70,6 +72,8 @@ namespace ServiceStack.Redis
 
             clients = new RedisClient[MaxPoolSize];
             poolIndex = 0;
+
+            JsConfig.InitStatics();
         }
 
         public void FailoverTo(params string[] readWriteHosts)
@@ -118,7 +122,7 @@ namespace ServiceStack.Redis
         {
             try
             {
-                var inactivePoolIndex = -1; 
+                var inactivePoolIndex = -1;
                 lock (clients)
                 {
                     AssertValidPool();
@@ -141,7 +145,10 @@ namespace ServiceStack.Redis
                 try
                 {
                     //inactivePoolIndex == -1 || index of reservedSlot || index of invalid client
-                    var existingClient = inactivePoolIndex >= 0 ? clients[inactivePoolIndex] : null;
+                    var existingClient = inactivePoolIndex >= 0 && inactivePoolIndex < clients.Length
+                        ? clients[inactivePoolIndex]
+                        : null;
+
                     if (existingClient != null && existingClient != reservedSlot && existingClient.HadExceptions)
                     {
                         RedisState.DeactivateClient(existingClient);
@@ -155,10 +162,12 @@ namespace ServiceStack.Redis
                         //Create new client outside of pool when max pool size exceeded
                         //Reverting free-slot not needed when -1 since slwo wasn't reserved or 
                         //when existingClient changed (failover) since no longer reserver
-                        if (inactivePoolIndex == -1 || clients[inactivePoolIndex] != existingClient)
+                        var stillReserved = inactivePoolIndex >= 0 && inactivePoolIndex < clients.Length &&
+                            clients[inactivePoolIndex] == existingClient;
+                        if (inactivePoolIndex == -1 || !stillReserved)
                         {
                             if (Log.IsDebugEnabled)
-                                Log.Debug("clients[inactivePoolIndex] != existingClient: {0}".Fmt(clients[inactivePoolIndex]));
+                                Log.Debug("clients[inactivePoolIndex] != existingClient: {0}".Fmt(!stillReserved ? "!stillReserved" : "-1"));
 
                             Interlocked.Increment(ref RedisState.TotalClientsCreatedOutsidePool);
 
@@ -177,7 +186,10 @@ namespace ServiceStack.Redis
                     //Revert free-slot for any I/O exceptions that can throw (before lock)
                     lock (clients)
                     {
-                        clients[inactivePoolIndex] = null;
+                        if (inactivePoolIndex >= 0 && inactivePoolIndex < clients.Length)
+                        {
+                            clients[inactivePoolIndex] = null;
+                        }
                     }
                     throw;
                 }
@@ -316,11 +328,16 @@ namespace ServiceStack.Redis
 
             var ret = new Dictionary<string, string>
             {
+                {"VersionString", "" + Text.Env.VersionString},
+
                 {"clientsPoolSize", "" + clientsPoolSize},
                 {"clientsCreated", "" + clientsCreated},
                 {"clientsWithExceptions", "" + clientsWithExceptions},
                 {"clientsInUse", "" + clientsInUse},
                 {"clientsConnected", "" + clientsConnected},
+
+                {"RedisResolver.ReadOnlyHostsCount", "" + RedisResolver.ReadOnlyHostsCount},
+                {"RedisResolver.ReadWriteHostsCount", "" + RedisResolver.ReadWriteHostsCount},
             };
 
             return ret;

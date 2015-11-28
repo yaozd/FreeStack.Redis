@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using ServiceStack.Caching;
 using ServiceStack.Logging;
+using ServiceStack.Text;
 
 namespace ServiceStack.Redis
 {
@@ -128,8 +129,8 @@ namespace ServiceStack.Redis
 
             this.Config = config ?? new RedisClientManagerConfig
             {
-                MaxWritePoolSize = masters.Length * PoolSizeMultiplier,
-                MaxReadPoolSize = slaves.Length * PoolSizeMultiplier,
+                MaxWritePoolSize = RedisConfig.DefaultMaxPoolSize ?? masters.Length * PoolSizeMultiplier,
+                MaxReadPoolSize = RedisConfig.DefaultMaxPoolSize ?? slaves.Length * PoolSizeMultiplier,
             };
 
             this.OnFailover = new List<Action<IRedisClientsManager>>();
@@ -139,6 +140,7 @@ namespace ServiceStack.Redis
                 ? poolTimeOutSeconds * 1000
                 : 2000; //Default Timeout
 
+            JsConfig.InitStatics();
 
             if (this.Config.AutoStart)
             {
@@ -644,6 +646,8 @@ namespace ServiceStack.Redis
 
             var ret = new Dictionary<string, string>
             {
+                {"VersionString", "" + Text.Env.VersionString},
+
                 {"writeClientsPoolSize", "" + writeClientsPoolSize},
                 {"writeClientsCreated", "" + writeClientsCreated},
                 {"writeClientsWithExceptions", "" + writeClientsWithExceptions},
@@ -655,6 +659,9 @@ namespace ServiceStack.Redis
                 {"readClientsWithExceptions", "" + readClientsWithExceptions},
                 {"readClientsInUse", "" + readClientsInUse},
                 {"readClientsConnected", "" + readClientsConnected},
+
+                {"RedisResolver.ReadOnlyHostsCount", "" + RedisResolver.ReadOnlyHostsCount},
+                {"RedisResolver.ReadWriteHostsCount", "" + RedisResolver.ReadWriteHostsCount},
             };
 
             return ret;
