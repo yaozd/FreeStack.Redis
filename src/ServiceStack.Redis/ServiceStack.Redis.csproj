@@ -137,7 +137,7 @@
       <HintPath>..\..\lib\ServiceStack.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Text">
-      <HintPath>..\packages\FreeStack.Text.4.2.0\lib\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\packages\FreeStack.Text.4.2.1\lib\ServiceStack.Text.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
