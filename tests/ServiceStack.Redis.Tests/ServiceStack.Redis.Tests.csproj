@@ -182,10 +182,13 @@
     <Compile Include="BasicRediscClientManagerTests.cs" />
     <Compile Include="ConfigTests.cs" />
     <Compile Include="CustomCommandTests.cs" />
+    <Compile Include="Issues\AuthIssue.cs" />
     <Compile Include="LuaCachedScripts.cs" />
     <Compile Include="Examples\TestData.cs" />
     <Compile Include="Issues\RedisCharacterizationTests.cs" />
     <Compile Include="RedisBatchTests.cs" />
+    <Compile Include="RedisGeoTests.cs" />
+    <Compile Include="RedisGeoNativeClientTests.cs" />
     <Compile Include="RedisManagerPoolTests.cs" />
     <Compile Include="DiagnosticTests.cs" />
     <Compile Include="Examples\ServiceStack_Redis_UseCase.cs" />

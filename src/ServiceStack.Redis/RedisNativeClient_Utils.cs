@@ -107,13 +107,13 @@ namespace ServiceStack.Redis
                 Bstream = new BufferedStream(networkStream, 16 * 1024);
 
                 if (!string.IsNullOrEmpty(Password))
-                    SendExpectSuccess(Commands.Auth, Password.ToUtf8Bytes());
+                    SendUnmanagedExpectSuccess(Commands.Auth, Password.ToUtf8Bytes());
 
                 if (db != 0)
-                    SendExpectSuccess(Commands.Select, db.ToUtf8Bytes());
+                    SendUnmanagedExpectSuccess(Commands.Select, db.ToUtf8Bytes());
 
                 if (Client != null)
-                    SendExpectSuccess(Commands.Client, Commands.SetName, Client.ToUtf8Bytes());
+                    SendUnmanagedExpectSuccess(Commands.Client, Commands.SetName, Client.ToUtf8Bytes());
 
                 try
                 {
@@ -170,7 +170,7 @@ namespace ServiceStack.Redis
 
         protected string ReadLine()
         {
-            var sb = new StringBuilder();
+            var sb = StringBuilderCache.Allocate();
 
             int c;
             while ((c = Bstream.ReadByte()) != -1)
@@ -181,7 +181,7 @@ namespace ServiceStack.Redis
                     break;
                 sb.Append((char)c);
             }
-            return sb.ToString();
+            return StringBuilderCache.ReturnAndFree(sb);
         }
 
         public bool HasConnected
@@ -328,6 +328,24 @@ namespace ServiceStack.Redis
 
             //Total command lines count
             WriteAllToSendBuffer(cmdWithBinaryArgs);
+        }
+
+        /// <summary>
+        /// Send command outside of managed Write Buffer
+        /// </summary>
+        /// <param name="cmdWithBinaryArgs"></param>
+        protected void SendUnmanagedExpectSuccess(params byte[][] cmdWithBinaryArgs)
+        {
+            var bytes = GetCmdBytes('*', cmdWithBinaryArgs.Length);
+
+            foreach (var safeBinaryValue in cmdWithBinaryArgs)
+            {
+                bytes = bytes.Combine(GetCmdBytes('$', safeBinaryValue.Length), safeBinaryValue, endData);
+            }
+
+            Bstream.Write(bytes, 0, bytes.Length);
+
+            ExpectSuccess();
         }
 
         public void WriteAllToSendBuffer(params byte[][] cmdWithBinaryArgs)
@@ -593,7 +611,7 @@ namespace ServiceStack.Redis
         protected byte[][] SendExpectMultiData(params byte[][] cmdWithBinaryArgs)
         {
             return SendReceive(cmdWithBinaryArgs, ReadMultiData, Pipeline != null ? Pipeline.CompleteMultiBytesQueuedCommand : (Action<Func<byte[][]>>)null)
-                ?? new byte[0][];
+                ?? TypeConstants.EmptyByteArrayArray;
         }
 
         protected object[] SendExpectDeeplyNestedMultiData(params byte[][] cmdWithBinaryArgs)
@@ -622,7 +640,7 @@ namespace ServiceStack.Redis
 
         protected void CmdLog(byte[][] args)
         {
-            var sb = new StringBuilder();
+            var sb = StringBuilderCache.Allocate();
             foreach (var arg in args)
             {
                 var strArg = arg.FromUtf8Bytes();
@@ -636,7 +654,7 @@ namespace ServiceStack.Redis
                 if (sb.Length > 100)
                     break;
             }
-            this.lastCommand = sb.ToString();
+            this.lastCommand = StringBuilderCache.ReturnAndFree(sb);
             if (this.lastCommand.Length > 100)
             {
                 this.lastCommand = this.lastCommand.Substring(0, 100) + "...";
@@ -833,7 +851,7 @@ namespace ServiceStack.Redis
                         if (count == -1)
                         {
                             //redis is in an invalid state
-                            return new byte[0][];
+                            return TypeConstants.EmptyByteArrayArray;
                         }
 
                         var result = new byte[count][];
@@ -1043,7 +1061,7 @@ namespace ServiceStack.Redis
             for (var i = 0; i < keys.Length; i++)
             {
                 var key = keys[i];
-                keyBytes[i] = key != null ? key.ToUtf8Bytes() : new byte[0];
+                keyBytes[i] = key != null ? key.ToUtf8Bytes() : TypeConstants.EmptyByteArray;
             }
             return keyBytes;
         }
@@ -1051,9 +1069,9 @@ namespace ServiceStack.Redis
         protected byte[][] MergeAndConvertToBytes(string[] keys, string[] args)
         {
             if (keys == null)
-                keys = new string[0];
+                keys = TypeConstants.EmptyStringArray;
             if (args == null)
-                args = new string[0];
+                args = TypeConstants.EmptyStringArray;
 
             var keysLength = keys.Length;
             var merged = new string[keysLength + args.Length];
